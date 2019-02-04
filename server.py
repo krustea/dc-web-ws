@@ -53,4 +53,4 @@ def message_loop():
 # Ici nous créons un Thread qui va permettre à notre fonction de se lancer 
 # en parallèle du serveur.
 read_messages = threading.Thread(target=message_loop)
-read_messages.start()
+read_messages.start() 
