@@ -9,7 +9,7 @@ class TemperatureSensor:
     def __init__(self):
         os.system('modprobe w1-gpio')  # Allume le module 1wire
         os.system('modprobe w1-therm')  # Allume le module Temperature
-        self.device_file = '/sys/bus/w1/devices/28-01131a4f0da1/w1_slave'
+        self.device_file = '/sys/bus/w1/devices/28-01131a3eb0d1/w1_slave'
 
     def read_temp_raw(self):
         f = open(self.device_file, 'r')  # Ouvre le dichier
