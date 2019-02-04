@@ -3,9 +3,23 @@ from flask_socketio import SocketIO, send, emit
 from flask import render_template
 import time
 import threading
+import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+broche=17
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+# setup des leds
+GPIO.setup(18, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
+# setup du buzzer
+GPIO.setup(22, GPIO.OUT)
+
+GPIO.setup(broche, GPIO.IN)
+
+currentstate = 0
+previousstate = 0
 
 @app.route("/")
 def index():
@@ -14,7 +28,26 @@ def index():
 
 def message_loop():
     while True:
-        message = input('Votre message ?')
+        
+        
+            # Lecture du capteur
+        currentstate = GPIO.input(broche)
+		 # Si le capteur est déclenché
+        if currentstate == 1 and previousstate == 0:
+            GPIO.output(18, GPIO.HIGH)
+            GPIO.output(24, GPIO.HIGH)
+            GPIO.output(22, GPIO.HIGH)
+            message = "fa-spin détectée"
+            time.sleep(1)        # En enregistrer l'état
+            previousstate = 1
+    # Si le capteur est s'est stabilisé
+        elif currentstate == 0 and previousstate == 1:
+            GPIO.output(18, GPIO.LOW)
+            GPIO.output(24, GPIO.LOW)
+            GPIO.output(22, GPIO.LOW)
+            previousstate = 0
+    # On attends 10ms
+        time.sleep(0.01)
         socketio.emit('alert', message, Broadcast=True)
 
 # Vue que notre méthode pour lire nos message est une boucle infinie
