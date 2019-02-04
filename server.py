@@ -40,7 +40,7 @@ def message_loop():
             GPIO.output(24, GPIO.HIGH)
             GPIO.output(22, GPIO.HIGH)
             Celsius = degcel.degreeCelsius()
-            message = ("la temperature est de : " + Celsius)
+            message = ("la temperature est de : " + str(Celsius))
             socketio.emit('alert', message, Broadcast=True)
             previousstate = 1
             print("mouvement")
