@@ -41,7 +41,7 @@ while True:
         GPIO.output(18, GPIO.HIGH)
         GPIO.output(24, GPIO.HIGH)
         GPIO.output(22, GPIO.HIGH)
-        message = Celsius
+        message = ("la temperature est de : " , Celsius)
         socketio.emit('alert', message, Broadcast=True)
         previousstate = 1
         print("mouvement")
