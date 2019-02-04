@@ -5,6 +5,7 @@ import time
 import threading
 import RPi.GPIO as GPIO
 
+
 app = Flask(__name__)
 socketio = SocketIO(app)
 broche=17
@@ -18,8 +19,6 @@ GPIO.setup(22, GPIO.OUT)
 
 GPIO.setup(broche, GPIO.IN)
 
-currentstate = 0
-previousstate = 0
 
 @app.route("/")
 def index():
@@ -27,10 +26,13 @@ def index():
 
 
 def message_loop():
+    currentstate = 0
+    previousstate = 0
     while True:
             # Lecture du capteur
         currentstate = GPIO.input(broche)
 		 # Si le capteur est déclenché
+#        print("current state:"+ str(currentstate))
         if currentstate == 1 and previousstate == 0:
             GPIO.output(18, GPIO.HIGH)
             GPIO.output(24, GPIO.HIGH)
@@ -38,6 +40,7 @@ def message_loop():
             message = "fa-spin détectée"
             socketio.emit('alert', message, Broadcast=True)
             previousstate = 1
+            print("mouvement")
     # Si le capteur est s'est stabilisé
         elif currentstate == 0 and previousstate == 1:
             GPIO.output(18, GPIO.LOW)
