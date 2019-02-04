@@ -23,14 +23,14 @@ GPIO.setup(broche, GPIO.IN)
 
 @app.route("/")
 def index():
-    return render_template('index.html', Celsius = Celsius)
+    return render_template('index.html')
 
 
 def message_loop():
     currentstate = 0
     previousstate = 0
     while True:
-        Celsius = degcel.degreeCelsius()
+
         # Lecture du capteur
         currentstate = GPIO.input(broche)
         # Si le capteur est déclenché
@@ -39,6 +39,7 @@ def message_loop():
             GPIO.output(18, GPIO.HIGH)
             GPIO.output(24, GPIO.HIGH)
             GPIO.output(22, GPIO.HIGH)
+            Celsius = degcel.degreeCelsius()
             message = ("la temperature est de : ", Celsius)
             socketio.emit('alert', message, Broadcast=True)
             previousstate = 1
