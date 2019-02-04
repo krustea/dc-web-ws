@@ -1,4 +1,5 @@
 from flask import Flask
+from temperature import TemperatureSensor
 from flask_socketio import SocketIO, send, emit
 from flask import render_template
 import time
@@ -7,6 +8,7 @@ import RPi.GPIO as GPIO
 
 
 app = Flask(__name__)
+degcel= TemperatureSensor()
 socketio = SocketIO(app)
 broche=17
 GPIO.setmode(GPIO.BCM)
@@ -28,6 +30,7 @@ def index():
 def message_loop():
     currentstate = 0
     previousstate = 0
+	Celsius = degcel.degreeCelsius()
     while True:
             # Lecture du capteur
         currentstate = GPIO.input(broche)
@@ -37,7 +40,7 @@ def message_loop():
             GPIO.output(18, GPIO.HIGH)
             GPIO.output(24, GPIO.HIGH)
             GPIO.output(22, GPIO.HIGH)
-            message = "fa-spin détectée"
+            message = Celsius
             socketio.emit('alert', message, Broadcast=True)
             previousstate = 1
             print("mouvement")
