@@ -27,32 +27,31 @@ def index():
 
 
 def message_loop():
+    Celsius = degcel.degreeCelsius()
     currentstate = 0
     previousstate = 0
-    Celsius = degcel.degreeCelsius()
+    while True:
+        # Lecture du capteur
+        currentstate = GPIO.input(broche)
+        # Si le capteur est déclenché
+        #        print("current state:"+ str(currentstate))
+        if currentstate == 1 and previousstate == 0:
+            GPIO.output(18, GPIO.HIGH)
+            GPIO.output(24, GPIO.HIGH)
+            GPIO.output(22, GPIO.HIGH)
+            message = ("la temperature est de : ", Celsius)
+            socketio.emit('alert', message, Broadcast=True)
+            previousstate = 1
+            print("mouvement")
+        # Si le capteur est s'est stabilisé
+        elif currentstate == 0 and previousstate == 1:
+            GPIO.output(18, GPIO.LOW)
+            GPIO.output(24, GPIO.LOW)
+            GPIO.output(22, GPIO.LOW)
+            previousstate = 0
+        # On attends 10ms
+        time.sleep(0.01)
 
-
-while True:
-    # Lecture du capteur
-    currentstate = GPIO.input(broche)
-    # Si le capteur est déclenché
-    #        print("current state:"+ str(currentstate))
-    if currentstate == 1 and previousstate == 0:
-        GPIO.output(18, GPIO.HIGH)
-        GPIO.output(24, GPIO.HIGH)
-        GPIO.output(22, GPIO.HIGH)
-        message = ("la temperature est de : " , Celsius)
-        socketio.emit('alert', message, Broadcast=True)
-        previousstate = 1
-        print("mouvement")
-    # Si le capteur est s'est stabilisé
-    elif currentstate == 0 and previousstate == 1:
-        GPIO.output(18, GPIO.LOW)
-        GPIO.output(24, GPIO.LOW)
-        GPIO.output(22, GPIO.LOW)
-        previousstate = 0
-    # On attends 10ms
-    time.sleep(0.01)
 
 # Vue que notre méthode pour lire nos message est une boucle infinie
 # Elle bloquerait notre serveur. Qui ne pourrait répondre à aucune requête.
